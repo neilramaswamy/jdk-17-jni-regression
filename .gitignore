@@ -1,0 +1,7 @@
+.vscode/
+
+# Build files
+target/
+
+# Misc
+dependency-reduced-pom.xml
