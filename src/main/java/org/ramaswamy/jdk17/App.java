@@ -1,7 +1,6 @@
 package org.ramaswamy.jdk17;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +21,7 @@ public class App {
         opts.setCreateIfMissing(true);
 
         setJVMLogger(opts);
-        opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.FATAL_LEVEL);
+        opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
 
         // Write a few million records into RocksDB to stress the logging
         try (final RocksDB db = RocksDB.open(opts, dbPath)) {
