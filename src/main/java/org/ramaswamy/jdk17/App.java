@@ -1,5 +1,6 @@
 package org.ramaswamy.jdk17;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,25 +14,49 @@ public class App {
     private static final Logger logger = LogManager.getLogger("app");
 
     public static void main(String[] args) {
+        System.out.println("Java version is " + System.getProperty("java.vesion"));
+
         String dbPath = "/tmp/rocks-db";
 
         Options opts = new Options();
         opts.setCreateIfMissing(true);
 
         setJVMLogger(opts);
-        opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
+        opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.FATAL_LEVEL);
 
+        // Write a few million records into RocksDB to stress the logging
         try (final RocksDB db = RocksDB.open(opts, dbPath)) {
-            db.put("hello".getBytes(), "world".getBytes());
+            // 10M iterations, 64 * 2 bytes each
+            // 10M iterations, 120bytes each => 1.2 gigabytes
 
-            String result = new String(db.get("hello".getBytes()), StandardCharsets.UTF_8);
-            System.out.println("Got " + result.toString());
+            for (int iters = 0; iters < 1; iters++) {
+                for (int i = 0; i < 10000000; i++) {
+                    db.put(longToBytes(i), longToBytes(i + 1));
+                }
+
+                for (int i = 10000000 - 1; i >= 0; i--) {
+                    byte[] val = longToBytes(i);
+
+                    db.get(val);
+                    db.delete(val);
+                }
+            }
         } catch (final RocksDBException e) {
             System.err.println(e);
         }
 
-        logger.info("Log from Log4j");
-        System.out.println("Hello World!");
+        // Clean up resources
+        try {
+            RocksDB.destroyDB("/tmp/rocks-db", opts);
+        } catch (RocksDBException e) {
+            System.out.println("Error cleaning up database: " + e);
+        }
+    }
+
+    public static byte[] longToBytes(long x) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.putLong(x);
+        return buffer.array();
     }
 
     /**
