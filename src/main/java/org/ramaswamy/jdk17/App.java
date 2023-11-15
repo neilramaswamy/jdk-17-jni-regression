@@ -1,9 +1,10 @@
 package org.ramaswamy.jdk17;
 
-import java.nio.ByteBuffer;
+import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.rocksdb.FlushOptions;
 import org.rocksdb.InfoLogLevel;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
@@ -12,50 +13,58 @@ import org.rocksdb.RocksDBException;
 public class App {
     private static final Logger logger = LogManager.getLogger("app");
 
+    // The number of trials to run. In each trial, we write and flush ITERS_PER_TRIAL
+    // records with a NUM_BYTES_PER_RECORD key and value.
+    private static final int NUM_TRIALS = 1;
+
+    private static final int ITERS_PER_TRIAL = 1000;
+
+    private static int NUM_BYTES_PER_RECORD = 1024;
+
+    private static String DB_PATH = "/tmp/rocks-db";
+
+    private static boolean SHOULD_LOG = true;
+
     public static void main(String[] args) {
-        System.out.println("Java version is " + System.getProperty("java.vesion"));
-
-        String dbPath = "/tmp/rocks-db";
-
         Options opts = new Options();
         opts.setCreateIfMissing(true);
 
-        setJVMLogger(opts);
-        opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
+        if (SHOULD_LOG) {
+            opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
+            setJVMLogger(opts);
+        }
 
-        // Write a few million records into RocksDB to stress the logging
-        try (final RocksDB db = RocksDB.open(opts, dbPath)) {
-            // 10M iterations, 64 * 2 bytes each
-            // 10M iterations, 120bytes each => 1.2 gigabytes
+        for (int trial = 0; trial < NUM_TRIALS; trial++) {
+            try (final RocksDB db = RocksDB.open(opts, DB_PATH)) {
+                // Values we use in every trial
+                Random rand = new Random();
+                FlushOptions flushOptions = new FlushOptions();
 
-            for (int iters = 0; iters < 1; iters++) {
-                for (int i = 0; i < 10000000; i++) {
-                    db.put(longToBytes(i), longToBytes(i + 1));
+                long trialFlushTime = 0L;
+
+                for (int i = 0; i < ITERS_PER_TRIAL; i++) {
+                    byte[] bytes = new byte[NUM_BYTES_PER_RECORD];
+                    rand.nextBytes(bytes);
+                    db.put(bytes, bytes);
+                    
+                    long startFlush = System.nanoTime();
+                    db.flush(flushOptions);
+                    trialFlushTime = System.nanoTime() - startFlush;
                 }
 
-                for (int i = 10000000 - 1; i >= 0; i--) {
-                    byte[] val = longToBytes(i);
+                System.out.println(trialFlushTime);
 
-                    db.get(val);
-                    db.delete(val);
+                // Clean up resources
+                try {
+                    db.close();
+                    RocksDB.destroyDB(DB_PATH, opts);
+                } catch (RocksDBException e) {
+                    System.out.println("Error cleaning up database: " + e);
                 }
+            } catch (final RocksDBException e) {
+                System.err.println(e);
             }
-        } catch (final RocksDBException e) {
-            System.err.println(e);
         }
-
-        // Clean up resources
-        try {
-            RocksDB.destroyDB("/tmp/rocks-db", opts);
-        } catch (RocksDBException e) {
-            System.out.println("Error cleaning up database: " + e);
-        }
-    }
-
-    public static byte[] longToBytes(long x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(x);
-        return buffer.array();
     }
 
     /**
@@ -85,6 +94,7 @@ public class App {
             }
         };
 
+        jvmLogger.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
         options.setLogger(jvmLogger);
     }
 }
