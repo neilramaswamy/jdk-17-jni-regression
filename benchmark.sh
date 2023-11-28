@@ -2,16 +2,26 @@
 
 # Build with JDK 8: we'll use it for both JDK 8 and 17 runs
 jenv local zulu64-1.8.0.392
-mvn package
+mvn package 2>/dev/null
 
-# Run App for JDK 8
-echo "Computing $(jenv local) flush times"
-java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App
+# ----------------
+# Run WITH logging
+# ----------------
 
-# Run App for JDK 17
-jenv local zulu64-17.0.9
-echo "Computing $(jenv local) flush times"
-echo "JDK 17 flush times"
-java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App
+jenv local zulu64-1.8.0.392
+echo "Computing $(jenv local) flush times WITH logging" # JDK 8
+for i in {1..5}
+do
+    java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=true
+    echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
+    rm ./logs/rocksdb-demo.log
+done
 
-
+jenv local zulu64-17.0.9 # JDK 17
+echo "Computing $(jenv local) flush times WITH logging"
+for i in {1..5}
+do
+    java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=true 2>/dev/null
+    echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
+    rm ./logs/rocksdb-demo.log
+done
