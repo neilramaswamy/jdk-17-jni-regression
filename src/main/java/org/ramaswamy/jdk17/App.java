@@ -14,7 +14,7 @@ public class App {
     private static final Logger logger = LogManager.getLogger("app");
 
     // The number of times we write and flush (together) to RocksDB.
-    private static final int NUM_ROCKSDB_OPS = 100;
+    private static final int NUM_ROCKSDB_OPS = 1000;
 
     private static int NUM_BYTES_PER_RECORD = 1024;
 

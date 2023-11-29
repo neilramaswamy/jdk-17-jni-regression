@@ -1,27 +1,29 @@
 #!/bin/bash
 
-# Build with JDK 8: we'll use it for both JDK 8 and 17 runs
-jenv local zulu64-1.8.0.392
-mvn package 2>/dev/null
+JAVA_8_PATH=/usr/lib/jvm/java-8-openjdk-amd64
+JAVA_17_PATH=/usr/lib/jvm/zulu17-ca-amd64
 
-# ----------------
-# Run WITH logging
-# ----------------
+# mvn doesn't work with JDK 17?
+# https://stackoverflow.com/questions/44438848/maven-crashes-when-trying-to-compile-a-project-error-executing-maven
+mvn package
 
-jenv local zulu64-1.8.0.392
-echo "Computing $(jenv local) flush times WITH logging" # JDK 8
-for i in {1..5}
+echo JAVA 8 TIMES
+echo ----------------------------------------------
+for i in {1..10}
 do
-    java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=true
-    echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
+    $JAVA_8_PATH/bin/java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=false
+    # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
+echo ----------------------------------------------
 
-jenv local zulu64-17.0.9 # JDK 17
-echo "Computing $(jenv local) flush times WITH logging"
-for i in {1..5}
+
+echo JAVA 17 TIMES
+echo ----------------------------------------------
+for i in {1..10}
 do
-    java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=true 2>/dev/null
-    echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
+    $JAVA_17_PATH/bin/java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=false 2>/dev/null
+    # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
+echo ----------------------------------------------
