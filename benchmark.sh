@@ -3,27 +3,32 @@
 JAVA_8_PATH=/usr/lib/jvm/java-8-openjdk-amd64
 JAVA_17_PATH=/usr/lib/jvm/zulu17-ca-amd64
 
+TIMES=5
+
+jenv local zulu64-1.8.0.392
+
 # mvn doesn't work with JDK 17?
 # https://stackoverflow.com/questions/44438848/maven-crashes-when-trying-to-compile-a-project-error-executing-maven
 mvn package
 
 echo JAVA 8 TIMES
 echo ----------------------------------------------
-for i in {1..10}
+for i in {1..1}
 do
-    $JAVA_8_PATH/bin/java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=false
+    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true
     # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
 echo ----------------------------------------------
 
+jenv local zulu64-17.0.9
 
 echo JAVA 17 TIMES
 echo ----------------------------------------------
-for i in {1..10}
+for i in {1..1}
 do
-    $JAVA_17_PATH/bin/java -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.App --log=false 2>/dev/null
-    # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
+    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true
+    echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
 echo ----------------------------------------------
