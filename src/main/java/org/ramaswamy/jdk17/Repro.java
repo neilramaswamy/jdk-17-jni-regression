@@ -83,11 +83,13 @@ public class Repro {
                 db.flush(flushOptions);
             }
 
-            System.out.println(System.nanoTime() - startTime);
+            System.out.println("Time taken: " + (System.nanoTime() - startTime));
 
             // Clean up
             try {
                 db.close();
+                RocksDB.destroyDB(DB_PATH, opts);
+
                 // Options hold a ref-count to the logger. Need to close the options
                 // so that the logger can be freed.
                 opts.close();
@@ -95,8 +97,6 @@ public class Repro {
                 if (logger != null) {
                     logger.close();
                 }
-
-                RocksDB.destroyDB(DB_PATH, opts);
             } catch (RocksDBException e) {
                 System.out.println("Error cleaning up database: " + e);
             }
