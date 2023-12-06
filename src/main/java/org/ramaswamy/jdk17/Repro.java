@@ -14,7 +14,7 @@ public class Repro {
     private static final Logger logger = LogManager.getLogger("app");
 
     // The number of times we write and flush (together) to RocksDB.
-    private static final int NUM_ROCKSDB_OPS = 10;
+    private static final int NUM_ROCKSDB_OPS = 1000;
 
     private static int NUM_BYTES_PER_RECORD = 1024;
 
@@ -88,24 +88,21 @@ public class Repro {
             // Clean up
             try {
                 db.close();
-                RocksDB.destroyDB(DB_PATH, opts);
-
+                // Options hold a ref-count to the logger. Need to close the options
+                // so that the logger can be freed.
                 opts.close();
 
                 if (logger != null) {
-                    System.out.println("[REPRO] is owning logger handle " + logger.isOwningHandle());
-                    System.out.println("[REPRO] closing logger");
                     logger.close();
-                    System.out.println("[REPRO] Logger closed\n");
                 }
+
+                RocksDB.destroyDB(DB_PATH, opts);
             } catch (RocksDBException e) {
                 System.out.println("Error cleaning up database: " + e);
             }
         } catch (final RocksDBException e) {
             System.err.println(e);
         }
-
-        System.out.println("[REPRO] java exiting");
     }
 
     /**
