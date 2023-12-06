@@ -4,9 +4,14 @@
 target/
 
 # Log files
+*.log
 logs
 
 # Misc
 dependency-reduced-pom.xml
 .java-version
 .metals
+
+# Output files
+jdk8.txt
+jdk17.txt
