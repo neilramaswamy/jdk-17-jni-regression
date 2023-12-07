@@ -63,6 +63,7 @@ public class Repro {
 
         if (shouldLog) {
             opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
+            opts.setLogger(logger);
             logger = setJVMLogger(opts);
         }
 

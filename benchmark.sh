@@ -13,23 +13,21 @@ mvn package
 
 echo JAVA 8 TIMES
 echo ----------------------------------------------
-for i in {1..1}
+for i in {1..10}
 do
-    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true
+    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true 2> error.log
     # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
 echo ----------------------------------------------
 
-echo Running JDK 17
-
 jenv local zulu64-17.0.9
 
 echo JAVA 17 TIMES
 echo ----------------------------------------------
-for i in {1..1}
+for i in {1..10}
 do
-    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true 2> /dev/null
+    $(which java) -cp target/jni-threads-1.0-SNAPSHOT.jar org.ramaswamy.jdk17.Repro --log=true 2> error.log
     # echo "Log file size is $(du ./logs/rocksdb-demo.log | awk '{print $1'})"
     rm ./logs/rocksdb-demo.log
 done
