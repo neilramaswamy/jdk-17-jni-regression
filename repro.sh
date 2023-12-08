@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" -lt 1 ]; then
-    echo "Error: No arguments provided. Please provide the full path to the RocksDB jar you intend to use."
+    echo "Usage: ./repro.sh <path to RocksDB jar to use>"
     exit 1
 fi
 
