@@ -5,8 +5,9 @@ def calculate_percentiles(data):
     p50 = np.percentile(data, 50)
     p90 = np.percentile(data, 90)
     p99 = np.percentile(data, 99)
+    p999 = np.percentile(data, 99.9)
     p100 = np.percentile(data, 100)
-    return p50, p90, p99, p100
+    return p50, p90, p99, p999, p100
 
 
 def read_integers_from_file(file_path):
@@ -26,11 +27,12 @@ def main():
             return
 
         sorted_data = sorted(data)
-        p50, p90, p99, p100 = calculate_percentiles(sorted_data)
+        p50, p90, p99, p999, p100 = calculate_percentiles(sorted_data)
 
         print(f"p50 latency: {p50}")
         print(f"p90 latency: {p90}")
         print(f"p99 latency: {p99}")
+        print(f"p99.9 latency: {p999}")
         print(f"p100 latency: {p100}")
 
 
