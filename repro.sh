@@ -17,9 +17,6 @@ mvn install:install-file \
 	-DartifactId=my-rocksdb \
 	-Dversion=0.0.1 \
 	-Dpackaging=jar
-
-# Build with Java 8 so that the binary works with both JDK 8 and 17
-jenv local 1.8
 mvn package
 
 echo JAVA 8 TIMES
