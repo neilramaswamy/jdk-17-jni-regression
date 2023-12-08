@@ -28,7 +28,7 @@ public class ReproStderr {
     public static void main(String[] args) {
         Options opts = new Options();
         opts.setCreateIfMissing(true);
-        opts.setStderrLogger();
+        // opts.setStderrLogger("");
 
         // ----------------------------------------
         // Calling RocksDB ops to generate logs

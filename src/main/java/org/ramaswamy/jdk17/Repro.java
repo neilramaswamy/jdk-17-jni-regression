@@ -63,7 +63,6 @@ public class Repro {
 
         if (shouldLog) {
             opts.setInfoLogLevel(org.rocksdb.InfoLogLevel.DEBUG_LEVEL);
-            opts.setLogger(logger);
             logger = setJVMLogger(opts);
         }
 
@@ -84,7 +83,7 @@ public class Repro {
                 db.flush(flushOptions);
             }
 
-            System.out.println("Time taken: " + (System.nanoTime() - startTime));
+            // System.out.println("Time taken: " + (System.nanoTime() - startTime));
 
             // Clean up
             try {
