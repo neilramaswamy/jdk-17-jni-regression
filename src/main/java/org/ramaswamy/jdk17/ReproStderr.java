@@ -3,13 +3,14 @@ package org.ramaswamy.jdk17;
 import java.util.Random;
 
 import org.rocksdb.FlushOptions;
+import org.rocksdb.InfoLogLevel;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 
 public class ReproStderr {
     // The number of times we write and flush (together) to RocksDB.
-    private static final int NUM_ROCKSDB_OPS = 1000;
+    private static final int NUM_ROCKSDB_OPS = 10;
 
     private static int NUM_BYTES_PER_RECORD = 1024;
 
@@ -28,7 +29,6 @@ public class ReproStderr {
     public static void main(String[] args) {
         Options opts = new Options();
         opts.setCreateIfMissing(true);
-        // opts.setStderrLogger("");
 
         // ----------------------------------------
         // Calling RocksDB ops to generate logs

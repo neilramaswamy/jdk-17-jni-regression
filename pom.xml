@@ -26,11 +26,19 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
+    <!-- <dependency>
       <groupId>com.ramaswamy.jdk17</groupId>
       <artifactId>my-rocksdb</artifactId>
       <version>0.0.1</version>
+    </dependency> -->
+
+    <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni -->
+    <dependency>
+        <groupId>org.rocksdb</groupId>
+        <artifactId>rocksdbjni</artifactId>
+        <version>9.0.0</version>
     </dependency>
+
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
