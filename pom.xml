@@ -14,8 +14,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -26,18 +26,18 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- <dependency>
+    <dependency>
       <groupId>com.ramaswamy.jdk17</groupId>
       <artifactId>my-rocksdb</artifactId>
       <version>0.0.1</version>
-    </dependency> -->
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni -->
-    <dependency>
+    <!-- <dependency>
         <groupId>org.rocksdb</groupId>
         <artifactId>rocksdbjni</artifactId>
-        <version>9.0.0</version>
-    </dependency>
+        <version>8.11.4</version>
+    </dependency> -->
 
 
     <dependency>
